@@ -35,6 +35,18 @@ Oracle Cloud Infrastructure currently documents Always Free Ampere compute for u
 
 For an update, pull the intended GitHub commit and rerun the same `docker compose -p traina-online --env-file .env.online -f compose.online.yaml up -d --build` command. Do not run `down -v`: that deletes database, media and certificate volumes. Before updates, back up PostgreSQL and `/app/data` (the `apprentice-db` and `apprentice-media` Docker volumes) to a separate location. A VM is online independently of either user's PC; it is not an SLA or an automatic offsite backup.
 
+## Cloudflare Tunnel on a VPS
+
+Cloudflare Tunnel provides the public HTTPS route; it does not host or run the application. Use a VPS that stays online, add a domain to Cloudflare, and create a remotely managed tunnel in **Cloudflare Dashboard → Networking → Tunnels**. In the tunnel, add a published application hostname (for example, `traina.example.com`) whose service URL is `http://web:3000`. Set `DOMAIN` in `.env.online` to that exact hostname and put the tunnel token in `CLOUDFLARE_TUNNEL_TOKEN`. Keep `.env.online` private.
+
+Start the Cloudflare variant from the repository root with:
+
+```bash
+docker compose -p traina-online --env-file .env.online -f compose.online.yaml -f compose.cloudflare.yaml up -d --build
+```
+
+The Cloudflare tunnel container shares the Compose network with the web service. Caddy is excluded in this variant; Cloudflare provides the public HTTPS endpoint. The PostgreSQL and media volumes remain persistent on the VPS. To return to the Caddy deployment, omit `compose.cloudflare.yaml` and set a public DNS record and domain as described above.
+
 ## Current deployment gate
 
 The deployment files are published in the GitHub repository. OCI instance provisioning is being completed in the Oracle console; this repository cannot confirm its state or connect to it. A domain/DNS name, SSH access to the VM, and provider credentials are still needed for the final HTTPS launch. Enter the intended server credentials in the private `.env.online` on the VM. The local `.env` remains ignored by Git.

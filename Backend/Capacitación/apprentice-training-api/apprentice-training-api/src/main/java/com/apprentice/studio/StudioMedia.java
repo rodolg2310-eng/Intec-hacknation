@@ -35,7 +35,18 @@ public class StudioMedia {
   }
   String dataUrl(FrameJob f){return dataUrl(f.imagePath);}
   String dataUrl(String path){try{return "data:image/jpeg;base64,"+Base64.getEncoder().encodeToString(Files.readAllBytes(checked(path)));}catch(IOException e){throw new IllegalStateException("Screenshot is missing.",e);}}
-  Path checked(String path){Path p=Path.of(path).toAbsolutePath().normalize();if(!p.startsWith(root.resolve(TenantContext.getId().toString())))throw ApiException.badRequest("Invalid media path.");return p;}
+  Path checked(String path){
+    Path tenantRoot=root.resolve(TenantContext.getId().toString()).toAbsolutePath().normalize();
+    Path p=Path.of(path).toAbsolutePath().normalize();
+    if(!p.startsWith(tenantRoot)){
+      String portable=path.replace('\\','/');
+      int media=portable.toLowerCase(Locale.ROOT).lastIndexOf("/media/");
+      if(media<0)throw ApiException.badRequest("Invalid media path.");
+      p=root.resolve(portable.substring(media+"/media/".length())).toAbsolutePath().normalize();
+    }
+    if(!p.startsWith(tenantRoot))throw ApiException.badRequest("Invalid media path.");
+    return p;
+  }
   Map<String,Object> upload(UUID session,UUID recording,long sequence,double start,double end,String kind,MultipartFile file){
     if(sequence<0||sequence>10000||!Double.isFinite(start)||!Double.isFinite(end)||start<0||end<start||end>5400||!Set.of("video","audio").contains(kind)||file.isEmpty()||file.getSize()>16*1024*1024)throw ApiException.badRequest("Invalid recording fragment.");
     try{

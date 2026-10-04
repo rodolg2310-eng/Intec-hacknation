@@ -38,8 +38,9 @@ foreach ($candidate in ($javaCandidates | Select-Object -Unique)) {
     $candidateJava = Join-Path $candidate 'bin\java.exe'
     $candidateJavac = Join-Path $candidate 'bin\javac.exe'
     if (-not (Test-Path -LiteralPath $candidateJava) -or -not (Test-Path -LiteralPath $candidateJavac)) { continue }
-    $javaVersionText = (& $candidateJava -version 2>&1 | Out-String)
-    if ($javaVersionText -match 'version "(?:1\.)?(\d+)' -and [int]$Matches[1] -ge 21) { $javaHome = $candidate; break }
+    $javaReleaseFile = Join-Path $candidate 'release'
+    $javaVersionLine = if (Test-Path -LiteralPath $javaReleaseFile) { Get-Content -LiteralPath $javaReleaseFile | Where-Object { $_ -match '^JAVA_VERSION=' } | Select-Object -First 1 }
+    if ($javaVersionLine -match '^JAVA_VERSION="(?:1\.)?(\d+)' -and [int]$Matches[1] -ge 21) { $javaHome = $candidate; break }
 }
 if (-not $javaHome) { throw 'Se requiere un JDK 21 o superior. Instálalo y agrégalo a PATH o configura JAVA_HOME.' }
 $javaExe = Join-Path $javaHome 'bin\java.exe'

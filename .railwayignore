@@ -1,0 +1,10 @@
+.git
+.runtime
+tmp
+**/node_modules
+**/target
+**/.output
+**/dist
+**/oracleJdk-27
+*.zip
+railway-seed/render.env.seed.bak

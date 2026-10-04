@@ -1,0 +1,7 @@
+.git
+.runtime
+tmp
+**/node_modules
+**/target
+**/.output
+railway-seed/render.env.seed.bak

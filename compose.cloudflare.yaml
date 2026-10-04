@@ -1,0 +1,13 @@
+# Overlay for a remotely managed Cloudflare Tunnel.
+# Configure its public hostname in Cloudflare to route to http://web:3000.
+services:
+  proxy:
+    profiles:
+      - caddy
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN:?Set CLOUDFLARE_TUNNEL_TOKEN in .env.online}
+    restart: unless-stopped
+    depends_on:
+      - web
