@@ -37,6 +37,6 @@ For an update, pull the intended GitHub commit and rerun the same `docker compos
 
 ## Current deployment gate
 
-The deployment files are prepared, but the public service has not been created or tested because this workspace does not have authenticated GitHub write access or an Oracle Cloud account. A domain/DNS name and VM access are also required for the final HTTPS launch. The project's existing application credentials are not copied into this template; enter the intended server credentials in the private `.env.online` on the VM. The local `.env` remains ignored by Git.
+The deployment files are published in the GitHub repository. OCI instance provisioning is being completed in the Oracle console; this repository cannot confirm its state or connect to it. A domain/DNS name, SSH access to the VM, and provider credentials are still needed for the final HTTPS launch. Enter the intended server credentials in the private `.env.online` on the VM. The local `.env` remains ignored by Git.
 
-The local environment did not expose Docker, so this Compose file still needs its first `docker compose config` and ARM image build on the target VM. The backend and frontend were previously tested locally, but that does not prove the remote services or provider credentials work.
+This online deployment guide uses Docker Compose, so install Docker Engine and the Compose plugin on the VM before running its commands. Docker is not required for the local Windows `Main.cmd` workflow; its absence on the development PC does not prevent local use. The Compose configuration and ARM image build still need their first validation on the target VM. Local backend/frontend checks do not prove the remote services or provider credentials work.
