@@ -22,8 +22,6 @@ COPY --from=web-build /workspace/web/package.json /app/web/package.json
 COPY --from=web-build /workspace/web/node_modules /app/web/node_modules
 COPY --from=web-build /workspace/web/.output /app/web/.output
 COPY railway-seed/data/ /seed/data/
-COPY railway-seed/render.env.seed /app/.env
 COPY deploy/start-railway.sh /app/start-railway.sh
-RUN chmod 600 /app/.env
 EXPOSE 3000
 ENTRYPOINT ["/bin/sh", "/app/start-railway.sh"]

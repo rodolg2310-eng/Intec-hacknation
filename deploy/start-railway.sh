@@ -35,7 +35,7 @@ fi
 
 cd /app/web
 export NITRO_HOST="0.0.0.0"
-export NITRO_PORT="${PORT:-3000}"
+export NITRO_PORT="3000"
 echo "Starting Traina web server on port ${NITRO_PORT}"
 node .output/server/index.mjs
 web_status=$?
