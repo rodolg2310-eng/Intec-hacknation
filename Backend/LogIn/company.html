@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${company.name} + ' · AI Apprentice'">Empresa</title>
+  <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+<body>
+  <main class="tarjeta">
+    <h1 th:text="${company.name}">Empresa</h1>
+    <p class="sub">Página de entrenamiento de <span th:text="${company.name}"></span>.</p>
+    <a class="boton" th:href="@{/login}">Entrar a mi cuenta</a>
+  </main>
+</body>
+</html>

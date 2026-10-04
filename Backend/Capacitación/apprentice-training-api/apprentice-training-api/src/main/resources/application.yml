@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: apprentice-training-api
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/apprentice}
+    username: ${DATABASE_USER:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  jpa:
+    open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 16MB
+      max-request-size: 17MB
+
+server:
+  port: ${PORT:8080}
+
+apprentice:
+  # Clave de administrador para dar de alta empresas (POST /api/tenants).
+  admin-api-key: ${ADMIN_API_KEY:cambia-esta-clave}
+  # Modo demo: carga una empresa de prueba con el Work Map de Sabine.
+  demo-data: ${DEMO_DATA:true}
+  # Anthropic procesa visión, generación de casos y evaluación de respuestas.
+  ai:
+    api-key: ${ANTHROPIC_API_KEY:}
+    model: ${ANTHROPIC_MODEL:claude-sonnet-4-6}
+  data-dir: ${APP_DATA_DIR:./.runtime/data}
+  allowed-origins: ${APP_ALLOWED_ORIGINS:http://localhost:3000,http://127.0.0.1:3000}
+  voice:
+    api-key: ${ELEVENLABS_API_KEY:}
+    agent-id: ${ELEVENLABS_AGENT_ID:}
+    voice-id: ${ELEVENLABS_VOICE_ID:}
+    model: ${ELEVENLABS_TTS_MODEL:eleven_multilingual_v2}
+
+logging:
+  level:
+    com.apprentice: info

@@ -1,0 +1,55 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-apprentice}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - apprentice-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-apprentice}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: ./Backend/Capacitación/apprentice-training-api/apprentice-training-api
+    environment:
+      DATABASE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-apprentice}
+      DATABASE_USER: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      ADMIN_API_KEY: ${ADMIN_API_KEY:-local-admin-change-me}
+      DEMO_DATA: ${DEMO_DATA:-true}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-4-6}
+      ELEVENLABS_API_KEY: ${ELEVENLABS_API_KEY:-}
+      ELEVENLABS_VOICE_ID: ${ELEVENLABS_VOICE_ID:-}
+      ELEVENLABS_TTS_MODEL: ${ELEVENLABS_TTS_MODEL:-eleven_multilingual_v2}
+      APP_DATA_DIR: /app/data
+      APP_ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+    volumes:
+      - apprentice-media:/app/data
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./Frontend/traina/traina
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+      API_ORIGIN: http://api:8080
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  apprentice-db:
+  apprentice-media:

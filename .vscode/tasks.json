@@ -1,0 +1,4 @@
+{
+  "version": "2.0.0",
+  "tasks": [{ "label": "Main · iniciar Traina", "type": "shell", "command": "${workspaceFolder}/Main.cmd", "group": { "kind": "build", "isDefault": true }, "problemMatcher": [] }]
+}

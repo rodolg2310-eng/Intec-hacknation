@@ -1,0 +1,174 @@
+{
+  "demo": true,
+  "liveQuestions": 3,
+  "guardrailQuestions": 2,
+  "debriefQuestions": 3,
+  "debriefAnswers": 3,
+  "mapConfirmed": true,
+  "events": [
+    {
+      "id": "10000000-0000-4000-8000-000000000001",
+      "ts": "03:12",
+      "title": "Classify equipment",
+      "decision": "Invoice 4471 / EUR 7,200 / 4711 to 0400",
+      "description": "The cost center changes from opex to capex.",
+      "possibleGuardrail": "EUR 5,000 threshold"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000002",
+      "ts": "04:05",
+      "title": "Check duplicate invoices",
+      "decision": "Recurring supplier / December invoice",
+      "description": "Hold the invoice while checking for duplicates.",
+      "possibleGuardrail": "Supplier exception"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000003",
+      "ts": "05:20",
+      "title": "Request second approval",
+      "decision": "Czech subsidiary invoice / Second review",
+      "description": "Send the invoice to a second approver.",
+      "possibleGuardrail": "Second approval"
+    }
+  ],
+  "messages": [
+    {
+      "id": "demo-q1",
+      "role": "assistant",
+      "text": "Why did you reclassify the equipment to capex?",
+      "stage": "capture",
+      "questionType": "reason",
+      "eventId": "10000000-0000-4000-8000-000000000001",
+      "ts": "2026-01-01T00:03:15Z",
+      "elapsedSeconds": 195,
+      "sourceLanguage": "en",
+      "status": "answered"
+    },
+    {
+      "id": "demo-a1",
+      "role": "user",
+      "text": "Equipment above EUR 5,000 is always capex. No asset number, no capex booking.",
+      "stage": "capture",
+      "questionType": "answer",
+      "eventId": "10000000-0000-4000-8000-000000000001",
+      "ts": "2026-01-01T00:03:30Z",
+      "elapsedSeconds": 210,
+      "audioStartSeconds": 210,
+      "sourceLanguage": "en",
+      "translated": false
+    },
+    {
+      "id": "demo-q2",
+      "role": "assistant",
+      "text": "When would you stop and ask for help?",
+      "stage": "capture",
+      "questionType": "guardrail",
+      "eventId": "10000000-0000-4000-8000-000000000002",
+      "ts": "2026-01-01T00:04:15Z",
+      "elapsedSeconds": 255,
+      "sourceLanguage": "en",
+      "status": "answered"
+    },
+    {
+      "id": "demo-a2",
+      "role": "user",
+      "text": "In December this supplier may invoice twice. I hold the invoice and check whether it already exists.",
+      "stage": "capture",
+      "questionType": "answer",
+      "eventId": "10000000-0000-4000-8000-000000000002",
+      "ts": "2026-01-01T00:04:30Z",
+      "elapsedSeconds": 270,
+      "audioStartSeconds": 270,
+      "sourceLanguage": "en",
+      "translated": false
+    },
+    {
+      "id": "demo-q3",
+      "role": "assistant",
+      "text": "What changes for the Czech subsidiary?",
+      "stage": "capture",
+      "questionType": "guardrail",
+      "eventId": "10000000-0000-4000-8000-000000000003",
+      "ts": "2026-01-01T00:05:15Z",
+      "elapsedSeconds": 315,
+      "sourceLanguage": "en",
+      "status": "answered"
+    },
+    {
+      "id": "demo-a3",
+      "role": "user",
+      "text": "Invoices from the Czech subsidiary need a second approval before saving.",
+      "stage": "capture",
+      "questionType": "answer",
+      "eventId": "10000000-0000-4000-8000-000000000003",
+      "ts": "2026-01-01T00:05:30Z",
+      "elapsedSeconds": 330,
+      "audioStartSeconds": 330,
+      "sourceLanguage": "en",
+      "translated": false
+    }
+  ],
+  "doubts": [],
+  "map": {
+    "title": "Process invoices with expert judgment",
+    "summary": "Fictional training example: classify spending, check duplicates and obtain the required approvals.",
+    "teachback": "Use capex for equipment above EUR 5,000 only with an asset number. Check this supplier’s December invoices for duplicates and obtain a second approval for the Czech subsidiary. Confirm or correct this process.",
+    "gaps": [],
+    "steps": [
+      {
+        "position": 1,
+        "title": "Classify equipment",
+        "event_id": "10000000-0000-4000-8000-000000000001",
+        "decision": "Invoice 4471 / EUR 7,200 / 4711 to 0400",
+        "reason_quote": "Equipment above EUR 5,000 is always capex. No asset number, no capex booking.",
+        "risk": "high"
+      },
+      {
+        "position": 2,
+        "title": "Check duplicate invoices",
+        "event_id": "10000000-0000-4000-8000-000000000002",
+        "decision": "Recurring supplier / December invoice",
+        "reason_quote": "In December this supplier may invoice twice. I hold the invoice and check whether it already exists.",
+        "risk": "high"
+      },
+      {
+        "position": 3,
+        "title": "Request second approval",
+        "event_id": "10000000-0000-4000-8000-000000000003",
+        "decision": "Czech subsidiary invoice / Second review",
+        "reason_quote": "Invoices from the Czech subsidiary need a second approval before saving.",
+        "risk": "medium"
+      }
+    ],
+    "guardrails": [
+      {
+        "kind": "limit",
+        "condition": "Equipment above EUR 5,000.",
+        "correct_action": "Use capex only with an asset number.",
+        "expert_quote": "Equipment above EUR 5,000 is always capex. No asset number, no capex booking.",
+        "step_position": 1
+      },
+      {
+        "kind": "stop_and_ask",
+        "condition": "No asset number for capex booking.",
+        "correct_action": "Stop and request the asset number.",
+        "expert_quote": "No asset number, no capex booking.",
+        "step_position": 1
+      },
+      {
+        "kind": "exception",
+        "condition": "A December invoice from this supplier.",
+        "correct_action": "Hold and check for duplicates.",
+        "expert_quote": "In December this supplier may invoice twice. I hold the invoice and check whether it already exists.",
+        "step_position": 2
+      },
+      {
+        "kind": "stop_and_ask",
+        "condition": "An invoice from the Czech subsidiary.",
+        "correct_action": "Request a second approval before saving.",
+        "expert_quote": "Invoices from the Czech subsidiary need a second approval before saving.",
+        "step_position": 3
+      }
+    ]
+  }
+}

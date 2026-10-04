@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="'Experto · ' + ${company.name}">Experto</title>
+  <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+<body>
+  <main class="tarjeta">
+    <p class="etiqueta experto">Experto</p>
+    <h1 th:text="${company.name}">Empresa</h1>
+    <p class="sub">Hola, <span th:text="${email}"></span>.</p>
+    <p>Aquí grabas tu experiencia. Lo que compartas se usa para <strong>entrenar a la IA</strong> de tu empresa.</p>
+
+    <!-- Aquí irá la grabación de sesiones del experto -->
+
+    <form method="post" th:action="@{/logout}">
+      <button type="submit" class="secundario">Cerrar sesión</button>
+    </form>
+  </main>
+</body>
+</html>

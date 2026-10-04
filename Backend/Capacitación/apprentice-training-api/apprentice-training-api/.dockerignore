@@ -1,0 +1,6 @@
+target
+.git
+.env
+.env.*
+!.env.example
+src/main/java/com/apprentice/ai/oracleJdk-27/

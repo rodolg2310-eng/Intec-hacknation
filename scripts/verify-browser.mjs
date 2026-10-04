@@ -1,0 +1,17 @@
+import { createRequire } from 'node:module';
+import { readFile, mkdir, writeFile } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+import path from 'node:path';
+const require=createRequire(path.join(process.env.USERPROFILE,'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/package.json'));
+const {chromium}=require('playwright');
+const origin=process.env.APP_URL||'http://127.0.0.1:3000',qa=path.resolve('.runtime/qa');await mkdir(qa,{recursive:true});
+const browser=await chromium.launch({channel:'chrome',headless:true,args:['--use-fake-ui-for-media-stream','--use-fake-device-for-media-stream']});
+const errors=[];const page=await browser.newPage({viewport:{width:1440,height:1000}});page.on('pageerror',e=>errors.push(e.message));
+await page.goto(origin);await page.getByRole('heading',{level:1}).waitFor();await page.screenshot({path:path.join(qa,'landing-desktop.png'),fullPage:true});assert(await page.getByRole('rowheader',{name:'Example step'}).count());
+await page.goto(origin+'/signin');await page.getByRole('button',{name:'Explore learner demo',exact:false}).click();await page.getByRole('heading',{name:"Your team's expertise, ready to learn."}).waitFor();await page.getByRole('button',{name:/Invoice decisions: a fictional example/}).click();await page.getByRole('rowheader',{name:'Example step'}).first().waitFor();
+assert.equal(await page.getByRole('button',{name:'Create activity',exact:true}).count(),0);assert.equal(await page.getByRole('button',{name:'Confirm and publish',exact:false}).count(),0);
+await page.screenshot({path:path.join(qa,'learner-map-desktop.png'),fullPage:true});await page.getByRole('button',{name:'Switch to dark mode'}).click();await page.screenshot({path:path.join(qa,'learner-map-dark.png'),fullPage:true});
+await page.setViewportSize({width:390,height:844});await page.screenshot({path:path.join(qa,'learner-map-mobile.png'),fullPage:true});const dimensions=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));assert(dimensions.scroll<=dimensions.width+1,JSON.stringify(dimensions));
+const ctx=JSON.parse(await readFile(path.join(qa,'browser-context.json'),'utf8'));
+const master=await browser.newPage({viewport:{width:1440,height:1000}});await master.context().addCookies([{name:'traina_session',value:ctx.masterCookie.split('=')[1],url:origin}]);await master.goto(origin+'/w/'+ctx.slug);await master.getByRole('heading',{name:'The right access for each person.'}).waitFor();assert.equal(await master.getByRole('button',{name:'Create activity'}).count(),0);await master.screenshot({path:path.join(qa,'master-desktop.png'),fullPage:true});
+await writeFile(path.join(qa,'browser-verification.json'),JSON.stringify({at:new Date().toISOString(),passed:['English landing and reference table','Learner role navigation','Published evidence map','Dark mode','390px responsive layout','Master role administration'],pageErrors:errors},null,2));assert.deepEqual(errors,[]);await browser.close();console.log('Browser verification passed; screenshots saved in .runtime/qa.');
