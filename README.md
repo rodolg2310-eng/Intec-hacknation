@@ -15,6 +15,8 @@ Double-click **Main.cmd**, run **Main.java** in VS Code using “Main · Traina 
 
 The site is **http://localhost:3000**, with the Java API on 8080. Main loads the root `.env`, prepares Maven and portable FFmpeg, builds changed code, starts the persistent H2 database and waits for both services. It uses a JDK 21+ from `JAVA_HOME` or `PATH`. Node.js 22+ (which includes npm) is required. Docker is optional.
 
+For a public HTTPS deployment with persistent database and media storage, follow [DEPLOYMENT.md](DEPLOYMENT.md). The online Compose stack uses a Linux VM and Caddy; the local `Main.cmd` workflow remains for development.
+
 ## Run on another Windows computer
 
 1. Install **JDK 21 or newer** and **Node.js 22 or newer**. Make sure `javac` is on `PATH`, or set `JAVA_HOME` to the JDK folder. The large local Oracle JDK archive is intentionally excluded from GitHub.
